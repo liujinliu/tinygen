@@ -1,0 +1,7 @@
+requests
+sqlalchemy
+
+# for build
+setuptools>=61.0
+build
+wheel
