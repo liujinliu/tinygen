@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import re
 from abc import ABC
+from typing import Union
 from sqlalchemy import create_engine, MetaData, text
 from sqlalchemy.orm import Session
 from tinygen.common.base_tool import BaseTool
@@ -16,6 +18,21 @@ class ToolShowTableNames(BaseQueryDatabase):
 
     def update(self, **kwargs):
         pass
+
+    def answer_hint(self) -> Union[str, None]:
+        return f'One table name or multiple table names separated by commas '
+
+    def parse_llm_output(self, res) -> dict:
+        for line in res.split('\n'):
+            if not line:
+                continue
+            if not re.match(r'[Aa]nswer: ', line.strip()):
+                continue
+            line_parts = re.findall(r'\b\w+\b', line)
+            return dict(table_names=line_parts[1:])
+
+    def question(self):
+        return f'what tables should I query?'
 
     @property
     def priori_information(self):
@@ -39,6 +56,16 @@ class ToolShowTableColumnInfo(BaseQueryDatabase):
 
     def update(self, **kwargs):
         self._tables = kwargs.get('table_names', [])
+
+    def answer_hint(self):
+        return f'the sql to solve the question, wrap the sql in ```'
+
+    def parse_llm_output(self, res) -> dict:
+        matched = re.match(r'.*```(?:[Ss]ql)*(.*)```', res, re.DOTALL)
+        return dict(sql=matched.group(1) if matched else '')
+
+    def question(self):
+        return f'give me the sql to solve the question, wrap the sql with ```'
 
     @property
     def priori_information(self):
@@ -70,6 +97,15 @@ class ToolQueryDataBySql(BaseQueryDatabase):
 
     def update(self, **kwargs):
         self._sql = kwargs.get('sql', None)
+
+    def answer_hint(self) -> Union[str, None]:
+        pass
+
+    def parse_llm_output(self, res) -> dict:
+        pass
+
+    def question(self):
+        pass
 
     @property
     def priori_information(self):

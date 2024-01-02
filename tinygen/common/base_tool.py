@@ -9,6 +9,18 @@ class BaseTool(ABC):
         self.para = None
 
     @abstractmethod
+    def answer_hint(self) -> Union[str, None]:
+        pass
+
+    @abstractmethod
+    def parse_llm_output(self, res) -> dict:
+        pass
+
+    @abstractmethod
+    def question(self):
+        pass
+
+    @abstractmethod
     def update(self, **kwargs):
         pass
 

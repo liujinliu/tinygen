@@ -2,7 +2,6 @@
 from typing import List
 from abc import ABC, abstractmethod
 from tinygen.common.base_tool import BaseTool
-from tinygen.common.base_output_parser import BaseOutputParser
 from tinygen.common.base_llm import BaseLLM
 
 
@@ -26,7 +25,7 @@ Question: In order to solve "{question}", {tool_question}
 
     @property
     @abstractmethod
-    def tool_parser_pair(self) -> list:
+    def tools(self) -> List[BaseTool]:
         pass
 
     @property
@@ -41,21 +40,21 @@ Question: In order to solve "{question}", {tool_question}
                 informations.append(f'{msg_index}: {msg}')
         return '\n'.join(informations)
 
-    def _ask_llm(self, output_parser: BaseOutputParser, question):
+    def _ask_llm(self, tool: BaseTool, question):
         content = self.PROMPT.format(
             priori_information=self.priori_information,
-            tool_input=output_parser.answer_hint(), question=question,
-            tool_question=output_parser.question())
+            tool_input=tool.answer_hint(), question=question,
+            tool_question=tool.question())
         res = self.llm.run(content=content)
-        return output_parser.parse_llm_output(res)
+        return tool.parse_llm_output(res)
 
     def invoke(self, question):
         last_output, ret = None, None
-        for tool, parser in self.tool_parser_pair:
+        for tool in self.tools:
             if last_output:
                 tool.update(**last_output)
             ret = tool.run()
             self.__tool_msgs.append(tool.priori_information)
-            if parser:
-                last_output = self._ask_llm(parser, question)
+            if tool.question():
+                last_output = self._ask_llm(tool, question)
         return ret
