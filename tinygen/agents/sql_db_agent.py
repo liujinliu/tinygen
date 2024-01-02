@@ -10,8 +10,8 @@ class SqlDbAgent(BaseAgent):
     def __init__(self, *, llm, db_uri, **kwargs):
         super(SqlDbAgent, self).__init__(llm=llm)
         self.__tools = [ToolShowTableNames(db_uri=db_uri),
-                ToolShowTableColumnInfo(db_uri=db_uri),
-                ToolQueryDataBySql(db_uri=db_uri)]
+                        ToolShowTableColumnInfo(db_uri=db_uri),
+                        ToolQueryDataBySql(db_uri=db_uri)]
 
     @property
     def tools(self):
