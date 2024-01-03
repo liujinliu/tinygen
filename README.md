@@ -18,7 +18,8 @@ sqlite demo.db
 cmd example
 ```
 (dev38) λ sql-db-cmd
-Welcome to use sql llm assistant. give me a db uri, and I use baidu qianfan llama2_70B model, so you shold give me an baidu token. Then you ask me any question about that db
+Welcome to use sql llm assistant. give me a db uri, and I use baidu qianfan llama2_70B model,
+so you shold give me an baidu token. Then you ask me any question about that db
 (sql-cmd): ?
 
 Documented commands (type help <topic>):
@@ -31,7 +32,7 @@ ask  setup_db  setup_token
 
 (sql-cmd): setup_db sqlite:///E:/code/tinygen/demo.db
 (sql-cmd): setup_token <your-token>
-(sql-cmd): ask "List the total sales per country"
+(sql-cmd): ask List the total sales per country
 [('Argentina', 37.620000000000005), ('Australia', 37.620000000000005), ......]
 ```
  
